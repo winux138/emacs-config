@@ -53,6 +53,40 @@
   (counsel-mode 1)
   :bind (:map ivy-minibuffer-map))
 
+;; Company is the best Emacs completion system.
+(use-package company
+  :bind (("C-." . company-complete))
+  :custom
+  (company-idle-delay 0) ;; I always want completion, give it to me asap
+  (company-dabbrev-downcase nil "Don't downcase returned candidates.")
+  (company-show-numbers t "Numbers are helpful.")
+  (company-tooltip-limit 10 "The more the merrier.")
+  :config
+  (global-company-mode) ;; We want completion everywhere
+
+  ;; use numbers 0-9 to select company completion candidates
+  (let ((map company-active-map))
+    (mapc (lambda (x) (define-key map (format "%d" x)
+                        `(lambda () (interactive) (company-complete-number ,x))))
+          (number-sequence 0 9))))
+
+;; Flycheck is the newer version of flymake and is needed to make lsp-mode not freak out.
+(use-package flycheck
+  :config
+  (add-hook 'prog-mode-hook 'flycheck-mode) ;; always lint my code
+  (add-hook 'after-init-hook #'global-flycheck-mode))
+
+;; Package for interacting with language servers
+(use-package lsp-mode
+  :commands lsp
+  :config
+  (setq lsp-prefer-flymake nil ;; Flymake is outdated
+        lsp-headerline-breadcrumb-mode nil)) ;; I don't like the symbols on the header a-la-vscode, remove this if you like them.
+(use-package lsp-ui :commands lsp-ui-mode)
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
+;; No longer stolen from the internet
+
 (use-package magit)
 (use-package eat)
 (use-package direnv
@@ -69,9 +103,9 @@
 ;; (set-frame-font nil t)
 ;; (set-face-attribute 'line-number nil :inherit 'default)
 (add-to-list 'default-frame-alist '(font . "Iosevka Nerd Font 16" ))
-(setq display-line-numbers 'relative)
+(global-display-line-numbers-mode)
+;; (setq display-line-numbers 'relative)
 
 (use-package gruber-darker-theme
   :init
   (load-theme 'gruber-darker))
-
