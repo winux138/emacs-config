@@ -1,3 +1,7 @@
+;;; package --- Emacs configuration
+;;; Commentary:
+;;; My Emacs configuration
+
 ;; (setq package-archives nil)
 
 ;; Any Customize-based settings should live in custom.el, not here.
@@ -36,39 +40,43 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; Make M-x and other mini-buffers sortable, filterable
-(use-package ivy
-  :init
-  (ivy-mode 1)
-  (setq ivy-height 15
-        ivy-use-virtual-buffers t
-        ivy-use-selectable-prompt t)
-  :config
-  (setq ivy-re-builders-alist
-	'((t . ivy--regex-fuzzy))))
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
 
-(use-package counsel
-  :after ivy
-  :init
-  (counsel-mode 1)
-  :bind (:map ivy-minibuffer-map))
+;; ;; Make M-x and other mini-buffers sortable, filterable
+;; (use-package ivy
+;;   :init
+;;   (ivy-mode 1)
+;;   (setq ivy-height 15
+;;         ivy-use-virtual-buffers t
+;;         ivy-use-selectable-prompt t)
+;;   :config
+;;   (setq ivy-re-builders-alist
+;; 	'((t . ivy--regex-fuzzy))))
 
-;; Company is the best Emacs completion system.
-(use-package company
-  :bind (("C-." . company-complete))
-  :custom
-  (company-idle-delay 0) ;; I always want completion, give it to me asap
-  (company-dabbrev-downcase nil "Don't downcase returned candidates.")
-  (company-show-numbers t "Numbers are helpful.")
-  (company-tooltip-limit 10 "The more the merrier.")
-  :config
-  (global-company-mode) ;; We want completion everywhere
+;; (use-package counsel
+;;   :after ivy
+;;   :init
+;;   (counsel-mode 1)
+;;   :bind (:map ivy-minibuffer-map))
 
-  ;; use numbers 0-9 to select company completion candidates
-  (let ((map company-active-map))
-    (mapc (lambda (x) (define-key map (format "%d" x)
-                        `(lambda () (interactive) (company-complete-number ,x))))
-          (number-sequence 0 9))))
+;; ;; Company is the best Emacs completion system.
+;; (use-package company
+;;   :bind (("C-." . company-complete))
+;;   :custom
+;;   (company-idle-delay 0) ;; I always want completion, give it to me asap
+;;   (company-dabbrev-downcase nil "Don't downcase returned candidates.")
+;;   (company-show-numbers t "Numbers are helpful.")
+;;   (company-tooltip-limit 10 "The more the merrier.")
+;;   :config
+;;   (global-company-mode) ;; We want completion everywhere
+
+;;   ;; use numbers 0-9 to select company completion candidates
+;;   (let ((map company-active-map))
+;;     (mapc (lambda (x) (define-key map (format "%d" x)
+;;                         `(lambda () (interactive) (company-complete-number ,x))))
+;;           (number-sequence 0 9))))
 
 ;; Flycheck is the newer version of flymake and is needed to make lsp-mode not freak out.
 (use-package flycheck
@@ -109,3 +117,4 @@
 (use-package gruber-darker-theme
   :init
   (load-theme 'gruber-darker))
+
