@@ -34,49 +34,43 @@
  use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
  use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
 
+;; Best completion style ?!
+(use-package hotfuzz
+  :config
+  (setq completion-styles '(hotfuzz)))
+
 ;; Slurp environment variables from the shell.
 ;; a.k.a. The Most Asked Question On r/emacs
 (use-package exec-path-from-shell
   :config
   (exec-path-from-shell-initialize))
 
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
+;; TODO: Use package general.el
 
-;; ;; Make M-x and other mini-buffers sortable, filterable
-;; (use-package ivy
-;;   :init
-;;   (ivy-mode 1)
-;;   (setq ivy-height 15
-;;         ivy-use-virtual-buffers t
-;;         ivy-use-selectable-prompt t)
-;;   :config
-;;   (setq ivy-re-builders-alist
-;; 	'((t . ivy--regex-fuzzy))))
+(use-package posframe)
 
-;; (use-package counsel
-;;   :after ivy
-;;   :init
-;;   (counsel-mode 1)
-;;   :bind (:map ivy-minibuffer-map))
+(use-package which-key)
 
-;; ;; Company is the best Emacs completion system.
-;; (use-package company
-;;   :bind (("C-." . company-complete))
-;;   :custom
-;;   (company-idle-delay 0) ;; I always want completion, give it to me asap
-;;   (company-dabbrev-downcase nil "Don't downcase returned candidates.")
-;;   (company-show-numbers t "Numbers are helpful.")
-;;   (company-tooltip-limit 10 "The more the merrier.")
-;;   :config
-;;   (global-company-mode) ;; We want completion everywhere
+(use-package which-key-posframe
+  :after which-key
+  :config
+  (which-key-posframe-mode))
 
-;;   ;; use numbers 0-9 to select company completion candidates
-;;   (let ((map company-active-map))
-;;     (mapc (lambda (x) (define-key map (format "%d" x)
-;;                         `(lambda () (interactive) (company-complete-number ,x))))
-;;           (number-sequence 0 9))))
+(use-package vertico
+  :init
+  (vertico-mode)
+  :custom
+  (vertico-cycle t))
+
+(use-package vertico-posframe
+  :after vertico
+  :config
+  (vertico-posframe-mode))
+
+;; Marginalia - annotations for completion
+(use-package marginalia
+  :init
+  (marginalia-mode))
 
 ;; Flycheck is the newer version of flymake and is needed to make lsp-mode not freak out.
 (use-package flycheck
@@ -92,8 +86,6 @@
         lsp-headerline-breadcrumb-mode nil)) ;; I don't like the symbols on the header a-la-vscode, remove this if you like them.
 (use-package lsp-ui :commands lsp-ui-mode)
 (use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-
-;; No longer stolen from the internet
 
 (use-package magit)
 (use-package eat)
