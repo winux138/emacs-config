@@ -34,6 +34,10 @@
  use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
  use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
 
+(use-package evil
+  :config
+  (evil-mode))
+
 ;; Best completion style ?!
 (use-package hotfuzz
   :config
