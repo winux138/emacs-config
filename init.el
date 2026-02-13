@@ -8,6 +8,19 @@
 (setq custom-file "~/.config/emacs/custom.el") ;; Without this emacs will dump generated custom settings in this file. No bueno.
 (load custom-file 'noerror)
 
+(tool-bar-mode 0)
+(menu-bar-mode 0)
+(scroll-bar-mode 0)
+(column-number-mode 1)
+(show-paren-mode 1)
+
+;; (set-frame-font nil t)
+;; (set-face-attribute 'line-number nil :inherit 'default)
+(add-to-list 'default-frame-alist '(font . "Iosevka Nerd Font Mono 16" ))
+(global-display-line-numbers-mode)
+(setq display-line-numbers 'relative)
+
+
 (require 'package)
 
 ;; Nice macro for updating lists in place.
@@ -108,18 +121,15 @@
   :config
   (direnv-mode))
 
-;; Start of config
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(scroll-bar-mode 0)
-(column-number-mode 1)
-(show-paren-mode 1)
-
-;; (set-frame-font nil t)
-;; (set-face-attribute 'line-number nil :inherit 'default)
-(add-to-list 'default-frame-alist '(font . "Iosevka Nerd Font 16" ))
-(global-display-line-numbers-mode)
-;; (setq display-line-numbers 'relative)
+;; Markdown preview with plantuml diagram support
+(use-package markdown-mode)
+(use-package plantuml-mode
+  :config
+  (setq plantuml-executable-path (executable-find "plantuml")
+        plantuml-default-exec-mode 'executable))
+(use-package markdown-preview-mode
+  :config
+  (setq markdown-preview-mode-plantuml-enabled t)) ;; Renders ```plantuml blocks in preview
 
 (use-package gruber-darker-theme
   :init
