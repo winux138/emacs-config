@@ -8,11 +8,6 @@
 (setq custom-file "~/.config/emacs/custom.el")
 (load custom-file 'noerror)
 
-;; UI modes are stripped in early-init.el via default-frame-alist.
-;; These ensure they stay off for the initial frame and any future frames.
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
 (column-number-mode 1)
 (show-paren-mode 1)
 
@@ -37,7 +32,6 @@
 
 (package-initialize)
 
-;; use-package is built-in since Emacs 29.
 (setq
  use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
  use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
@@ -110,7 +104,6 @@
         lsp-headerline-breadcrumb-enable nil)) ;; Disable breadcrumb header a-la-vscode.
 (use-package lsp-ui :commands lsp-ui-mode)
 
-;; consult-lsp integrates with Vertico (lsp-ivy requires Ivy which you don't use).
 (use-package consult-lsp
   :after lsp-mode)
 
