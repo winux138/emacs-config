@@ -72,7 +72,9 @@
 
 (use-package posframe)
 
-(use-package which-key)
+(use-package which-key
+  :config
+  (which-key-mode))
 
 (use-package which-key-posframe
   :after which-key
@@ -129,7 +131,7 @@
   (setq markdown-preview-mode-plantuml-enabled t)) ;; Renders ```plantuml blocks in preview
 
 (use-package gruber-darker-theme
-  :init
+  :config
   (load-theme 'gruber-darker t))
 
 ;;; init.el ends here

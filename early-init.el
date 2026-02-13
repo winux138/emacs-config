@@ -14,6 +14,7 @@
 (setq default-frame-alist
       '((tool-bar-lines . 0)
         (menu-bar-lines . 0)
-        (vertical-scroll-bars . nil)))
+        (vertical-scroll-bars . nil)
+        (font . "Iosevka Nerd Font Mono-16")))
 
 ;;; early-init.el ends here
