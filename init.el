@@ -1,25 +1,27 @@
-;;; package --- Emacs configuration
+;;; init.el --- Emacs configuration  -*- lexical-binding: t; -*-
 ;;; Commentary:
-;;; My Emacs configuration
-
-;; (setq package-archives nil)
+;; My Emacs configuration.
+;;; Code:
 
 ;; Any Customize-based settings should live in custom.el, not here.
-(setq custom-file "~/.config/emacs/custom.el") ;; Without this emacs will dump generated custom settings in this file. No bueno.
+;; Without this emacs will dump generated custom settings in this file.
+(setq custom-file "~/.config/emacs/custom.el")
 (load custom-file 'noerror)
 
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(scroll-bar-mode 0)
+;; UI modes are stripped in early-init.el via default-frame-alist.
+;; These ensure they stay off for the initial frame and any future frames.
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1)
 (column-number-mode 1)
 (show-paren-mode 1)
 
-;; (set-frame-font nil t)
-;; (set-face-attribute 'line-number nil :inherit 'default)
-(add-to-list 'default-frame-alist '(font . "Iosevka Nerd Font Mono 16" ))
-(global-display-line-numbers-mode)
-(setq display-line-numbers 'relative)
+;; Font -- use set-face-attribute for unambiguous family + size.
+(set-face-attribute 'default nil :family "Iosevka Nerd Font Mono" :height 160)
 
+;; Line numbers -- set type *before* enabling the mode.
+(setq display-line-numbers-type 'relative)
+(global-display-line-numbers-mode)
 
 (require 'package)
 
@@ -28,21 +30,14 @@
   "Append SUFFIX to TARGET in place."
   `(setq ,target (append ,target ,suffix)))
 
-;; Set up emacs package archives with 'package
+;; Set up emacs package archives with 'package.
 (append-to-list package-archives
-                '(("melpa" . "http://melpa.org/packages/") ;; Main package archive
-                  ("melpa-stable" . "http://stable.melpa.org/packages/") ;; Some packages might only do stable releases?
-                  ("org-elpa" . "https://orgmode.org/elpa/"))) ;; Org packages, I don't use org but seems like a harmless default
+                '(("melpa" . "https://melpa.org/packages/")
+                  ("melpa-stable" . "https://stable.melpa.org/packages/")))
 
 (package-initialize)
 
-;; Ensure use-package is present. From here on out, all packages are loaded
-;; with use-package, a macro for importing and installing packages. Also, refresh the package archive on load so we can pull the latest packages.
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-(require 'use-package)
+;; use-package is built-in since Emacs 29.
 (setq
  use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
  use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
@@ -50,7 +45,7 @@
 (use-package evil
   :init
   (setq
-   evil-want-integration t ;; This is optional since it's already set to t by default.
+   evil-want-integration t
    evil-want-keybinding nil
    evil-want-C-u-scroll t
    evil-want-Y-yank-to-eol t)
@@ -95,25 +90,27 @@
   :config
   (vertico-posframe-mode))
 
-;; Marginalia - annotations for completion
+;; Marginalia -- annotations for completion.
 (use-package marginalia
   :init
   (marginalia-mode))
 
-;; Flycheck is the newer version of flymake and is needed to make lsp-mode not freak out.
+;; Flycheck -- on-the-fly syntax checking.
 (use-package flycheck
-  :config
-  (add-hook 'prog-mode-hook 'flycheck-mode) ;; always lint my code
-  (add-hook 'after-init-hook #'global-flycheck-mode))
+  :init
+  (global-flycheck-mode))
 
-;; Package for interacting with language servers
+;; Package for interacting with language servers.
 (use-package lsp-mode
   :commands lsp
   :config
-  (setq lsp-prefer-flymake nil ;; Flymake is outdated
-        lsp-headerline-breadcrumb-mode nil)) ;; I don't like the symbols on the header a-la-vscode, remove this if you like them.
+  (setq lsp-diagnostics-provider :flycheck
+        lsp-headerline-breadcrumb-enable nil)) ;; Disable breadcrumb header a-la-vscode.
 (use-package lsp-ui :commands lsp-ui-mode)
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
+;; consult-lsp integrates with Vertico (lsp-ivy requires Ivy which you don't use).
+(use-package consult-lsp
+  :after lsp-mode)
 
 (use-package magit)
 (use-package eat)
@@ -121,7 +118,7 @@
   :config
   (direnv-mode))
 
-;; Markdown preview with plantuml diagram support
+;; Markdown preview with plantuml diagram support.
 (use-package markdown-mode)
 (use-package plantuml-mode
   :config
@@ -133,5 +130,6 @@
 
 (use-package gruber-darker-theme
   :init
-  (load-theme 'gruber-darker))
+  (load-theme 'gruber-darker t))
 
+;;; init.el ends here
