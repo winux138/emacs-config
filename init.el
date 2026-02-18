@@ -9,7 +9,7 @@
 (load custom-file 'noerror)
 
 ;; Font -- use set-face-attribute for unambiguous family + size.
-(set-face-attribute 'default nil :family "Iosevka Nerd Font Mono" :height 160)
+(set-face-attribute 'default nil :family "Iosevka Nerd Font Mono" :height 120)
 
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)

@@ -15,6 +15,6 @@
       '((tool-bar-lines . 0)
         (menu-bar-lines . 0)
         (vertical-scroll-bars . nil)
-        (font . "Iosevka Nerd Font Mono-16")))
+        (font . "Iosevka Nerd Font Mono-12")))
 
 ;;; early-init.el ends here
