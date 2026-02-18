@@ -8,15 +8,13 @@
 (setq custom-file "~/.config/emacs/custom.el")
 (load custom-file 'noerror)
 
-(column-number-mode 1)
-(show-paren-mode 1)
-
 ;; Font -- use set-face-attribute for unambiguous family + size.
 (set-face-attribute 'default nil :family "Iosevka Nerd Font Mono" :height 160)
 
-;; Line numbers -- set type *before* enabling the mode.
 (setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode)
+(column-number-mode 1)
+(show-paren-mode 1)
 
 (require 'package)
 
