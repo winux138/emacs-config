@@ -30,6 +30,11 @@
 
 (package-initialize)
 
+;; Refresh package archive contents if not cached yet.
+;; Without this, use-package :ensure silently fails for new packages.
+(unless package-archive-contents
+  (package-refresh-contents))
+
 (setq
  use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
  use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
@@ -48,6 +53,12 @@
   :after evil
   :config
   (evil-collection-init))
+
+;; Jump to visible text with avy, bound to 's' in normal state.
+(use-package avy
+  :after evil
+  :config
+  (evil-define-key 'normal 'global "s" 'avy-goto-char-2))
 
 ;; Best completion style ?!
 (use-package hotfuzz
