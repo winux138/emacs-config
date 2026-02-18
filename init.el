@@ -142,6 +142,11 @@
     "ss"  '(consult-line :wk "search buffer")
     "sp"  '(consult-ripgrep :wk "search project")
 
+    ;; Open
+    "o"   '(:ignore t :wk "open")
+    "od"  '(dired :wk "dired")
+    "ot"  '(eat :wk "terminal")
+
     ;; Quit
     "q"   '(:ignore t :wk "quit")
     "qq"  '(save-buffers-kill-emacs :wk "quit emacs")))
