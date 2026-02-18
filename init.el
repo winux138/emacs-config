@@ -63,7 +63,10 @@
 ;; Best completion style ?!
 (use-package hotfuzz
   :config
-  (setq completion-styles '(hotfuzz)))
+  (setq completion-styles '(hotfuzz)
+        completion-ignore-case t
+        read-buffer-completion-ignore-case t
+        read-file-name-completion-ignore-case t))
 
 ;; Slurp environment variables from the shell.
 ;; a.k.a. The Most Asked Question On r/emacs
@@ -188,6 +191,11 @@
 (use-package marginalia
   :init
   (marginalia-mode))
+
+;; Consult -- enhanced search and navigation commands.
+(use-package consult
+  :config
+  (setq consult-line-start-from-top t)) ;; Search from top of buffer.
 
 ;; Flycheck -- on-the-fly syntax checking.
 (use-package flycheck
