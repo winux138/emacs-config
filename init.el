@@ -60,7 +60,91 @@
   :config
   (exec-path-from-shell-initialize))
 
-;; TODO: Use package general.el
+;; Leader key setup with general.el -- Spacemacs-like SPC bindings.
+(use-package general
+  :after evil
+  :config
+  (general-evil-setup)
+
+  ;; Create a definer for SPC as leader in normal/visual states.
+  (general-create-definer leader-def
+    :states '(normal visual)
+    :keymaps 'override
+    :prefix "SPC"
+    :global-prefix "C-SPC") ;; fallback for insert/emacs states
+
+  (leader-def
+    ""    '(nil :wk "leader")
+
+    ;; Buffers
+    "b"   '(:ignore t :wk "buffer")
+    "bb"  '(switch-to-buffer :wk "switch buffer")
+    "bd"  '(kill-current-buffer :wk "kill buffer")
+    "bn"  '(next-buffer :wk "next buffer")
+    "bp"  '(previous-buffer :wk "prev buffer")
+    "bi"  '(ibuffer :wk "ibuffer")
+    "bs"  '(save-buffer :wk "save buffer")
+
+    ;; Files
+    "f"   '(:ignore t :wk "file")
+    "ff"  '(find-file :wk "find file")
+    "fs"  '(save-buffer :wk "save file")
+    "fr"  '(recentf :wk "recent files")
+
+    ;; Windows
+    "w"   '(:ignore t :wk "window")
+    "wv"  '(evil-window-vsplit :wk "vertical split")
+    "ws"  '(evil-window-split :wk "horizontal split")
+    "wd"  '(evil-window-delete :wk "delete window")
+    "wh"  '(evil-window-left :wk "window left")
+    "wj"  '(evil-window-down :wk "window down")
+    "wk"  '(evil-window-up :wk "window up")
+    "wl"  '(evil-window-right :wk "window right")
+    "w="  '(balance-windows :wk "balance windows")
+
+    ;; Git (magit)
+    "g"   '(:ignore t :wk "git")
+    "gs"  '(magit-status :wk "status")
+    "gb"  '(magit-blame :wk "blame")
+    "gl"  '(magit-log-current :wk "log")
+    "gd"  '(magit-diff :wk "diff")
+
+    ;; LSP
+    "l"   '(:ignore t :wk "lsp")
+    "ll"  '(lsp :wk "start lsp")
+    "lr"  '(lsp-rename :wk "rename")
+    "la"  '(lsp-execute-code-action :wk "code action")
+    "ld"  '(lsp-find-definition :wk "find definition")
+    "lD"  '(lsp-find-declaration :wk "find declaration")
+    "li"  '(lsp-find-implementation :wk "find implementation")
+    "lR"  '(lsp-find-references :wk "find references")
+    "ls"  '(consult-lsp-symbols :wk "workspace symbols")
+    "le"  '(consult-lsp-diagnostics :wk "diagnostics")
+    "lf"  '(lsp-format-buffer :wk "format buffer")
+    "lq"  '(lsp-workspace-restart :wk "restart lsp")
+    "lQ"  '(lsp-workspace-shutdown :wk "shutdown lsp")
+
+    ;; Quit / help
+    "h"   '(:ignore t :wk "help")
+    "hk"  '(describe-key :wk "describe key")
+    "hf"  '(describe-function :wk "describe function")
+    "hv"  '(describe-variable :wk "describe variable")
+    "hm"  '(describe-mode :wk "describe mode")
+
+    ;; Toggle
+    "t"   '(:ignore t :wk "toggle")
+    "tn"  '(display-line-numbers-mode :wk "line numbers")
+    "tw"  '(whitespace-mode :wk "whitespace")
+    "tt"  '(load-theme :wk "load theme")
+
+    ;; Search
+    "s"   '(:ignore t :wk "search")
+    "ss"  '(consult-line :wk "search buffer")
+    "sp"  '(consult-ripgrep :wk "search project")
+
+    ;; Quit
+    "q"   '(:ignore t :wk "quit")
+    "qq"  '(save-buffers-kill-emacs :wk "quit emacs")))
 
 (use-package posframe)
 
@@ -97,6 +181,8 @@
 ;; Package for interacting with language servers.
 (use-package lsp-mode
   :commands lsp
+  :init
+  (setq lsp-keymap-prefix nil) ;; Disable default lsp-mode keybindings; we use SPC l via general.el.
   :config
   (setq lsp-diagnostics-provider :flycheck
         lsp-headerline-breadcrumb-enable nil)) ;; Disable breadcrumb header a-la-vscode.
