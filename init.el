@@ -221,6 +221,10 @@
 (use-package consult-lsp
   :after lsp-mode)
 
+(use-package rustic
+  :custom
+  (rustic-lsp-client 'lsp-mode))
+
 (use-package magit)
 (use-package eat)
 (use-package direnv
