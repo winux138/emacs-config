@@ -202,15 +202,21 @@
   :init
   (global-flycheck-mode))
 
+(use-package consult-flycheck
+  :after (consult flycheck))
+
 ;; Package for interacting with language servers.
 (use-package lsp-mode
   :commands lsp
+  :after flycheck
   :init
   (setq lsp-keymap-prefix nil) ;; Disable default lsp-mode keybindings; we use SPC l via general.el.
   :config
   (setq lsp-diagnostics-provider :flycheck
         lsp-headerline-breadcrumb-enable nil)) ;; Disable breadcrumb header a-la-vscode.
-(use-package lsp-ui :commands lsp-ui-mode)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode)
 
 (use-package consult-lsp
   :after lsp-mode)
@@ -231,8 +237,12 @@
   :config
   (setq markdown-preview-mode-plantuml-enabled t)) ;; Renders ```plantuml blocks in preview
 
-(use-package gruber-darker-theme
+(use-package gruber-darker-theme)
+  ;; :config
+  ;; (load-theme 'gruber-darker t))
+
+(use-package doric-themes
   :config
-  (load-theme 'gruber-darker t))
+  (doric-themes-select 'doric-wind))
 
 ;;; init.el ends here
