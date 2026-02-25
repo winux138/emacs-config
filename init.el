@@ -273,9 +273,6 @@
   :config
   (setq plantuml-executable-path (executable-find "plantuml")
         plantuml-default-exec-mode 'executable))
-(use-package markdown-preview-mode
-  :config
-  (setq markdown-preview-mode-plantuml-enabled t)) ;; Renders ```plantuml blocks in preview
 
 (use-package gruber-darker-theme)
   ;; :config
