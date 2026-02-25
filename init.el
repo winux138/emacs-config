@@ -274,9 +274,9 @@
   (setq plantuml-executable-path (executable-find "plantuml")
         plantuml-default-exec-mode 'executable))
 
-(use-package gruber-darker-theme)
-  ;; :config
-  ;; (load-theme 'gruber-darker t))
+;; (use-package gruber-darker-theme
+;;   :config
+;;   (load-theme 'gruber-darker t))
 
 (use-package doric-themes
   :config
