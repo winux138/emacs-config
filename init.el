@@ -269,6 +269,10 @@
   :config
   (direnv-mode))
 
+(use-package diff-hl
+  :config
+  (global-diff-hl-mode))
+
 ;; Markdown preview with plantuml diagram support.
 (use-package markdown-mode)
 (use-package plantuml-mode
