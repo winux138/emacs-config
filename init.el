@@ -35,6 +35,7 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
+(require 'use-package-ensure) ;; Not autoloaded in Emacs 29+; without this :ensure is silently ignored.
 (setq
   use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
   use-package-always-defer nil
