@@ -61,13 +61,13 @@
   :config
   (evil-define-key 'normal 'global "s" 'avy-goto-char-2))
 
-;; Best completion style ?!
-(use-package hotfuzz
-  :config
-  (setq completion-styles '(hotfuzz)
-        completion-ignore-case t
-        read-buffer-completion-ignore-case t
-        read-file-name-completion-ignore-case t))
+;; ;; Best completion style ?!
+;; (use-package hotfuzz
+;;   :config
+;;   (setq completion-styles '(hotfuzz)
+;;         completion-ignore-case t
+;;         read-buffer-completion-ignore-case t
+;;         read-file-name-completion-ignore-case t))
 
 ;; Slurp environment variables from the shell.
 ;; a.k.a. The Most Asked Question On r/emacs
@@ -197,6 +197,41 @@
 (use-package consult
   :config
   (setq consult-line-start-from-top t)) ;; Search from top of buffer.
+
+(use-package corfu
+  ;; Optional customizations
+  ;; :custom
+  ;; (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+  ;; (corfu-quit-at-boundary nil)   ;; Never quit at completion boundary
+  ;; (corfu-quit-no-match nil)      ;; Never quit, even if there is no match
+  ;; (corfu-preview-current nil)    ;; Disable current candidate preview
+  ;; (corfu-preselect 'prompt)      ;; Preselect the prompt
+  ;; (corfu-on-exact-match 'insert) ;; Configure handling of exact matches
+
+  ;; Enable Corfu only for certain modes. See also `global-corfu-modes'.
+  ;; :hook ((prog-mode . corfu-mode)
+  ;;        (shell-mode . corfu-mode)
+  ;;        (eshell-mode . corfu-mode))
+
+  :init
+
+  ;; Recommended: Enable Corfu globally.  Recommended since many modes provide
+  ;; Capfs and Dabbrev can be used globally (M-/).  See also the customization
+  ;; variable `global-corfu-modes' to exclude certain modes.
+  (global-corfu-mode)
+
+  ;; Enable optional extension modes:
+  ;; (corfu-history-mode)
+  ;; (corfu-popupinfo-mode)
+  )
+
+;; Orderless -- hopefully a fzf-like finder/matcher
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles partial-completion))))
+  (completion-category-defaults nil) ;; Disable defaults, use our settings
+  (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
 
 ;; Flycheck -- on-the-fly syntax checking.
 (use-package flycheck
