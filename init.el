@@ -36,8 +36,9 @@
   (package-refresh-contents))
 
 (setq
- use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
- use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
+  use-package-always-ensure t ;; Makes sure to download new packages if they aren't already downloaded
+  use-package-always-defer nil
+  use-package-verbose t) ;; Package install logging. Packages break, it's nice to know why.
 
 (use-package evil
   :init
