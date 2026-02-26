@@ -95,7 +95,7 @@
 
     ;; Buffers
     "b"   '(:ignore t :wk "buffer")
-    "bb"  '(switch-to-buffer :wk "switch buffer")
+    "bb"  '(consult-buffer :wk "switch buffer")
     "bd"  '(kill-current-buffer :wk "kill buffer")
     "bn"  '(next-buffer :wk "next buffer")
     "bp"  '(previous-buffer :wk "prev buffer")
