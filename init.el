@@ -271,11 +271,12 @@
   (setq consult-line-start-from-top t)) ;; Search from top of buffer.
 
 ;; Affe -- async fuzzy file finder (fzf-style matching via orderless-flex)
+;; Affe -- async fuzzy file finder and grep
 (use-package affe
   :config
   (setq affe-regexp-compiler #'affe-orderless-regexp-compiler)
   (defun affe-orderless-regexp-compiler (input _type _ignorecase)
-    "Compile INPUT using orderless for affe fuzzy matching."
+    "Compile INPUT to regexps via orderless for affe's async pre-filtering."
     (setq input (cdr (orderless-compile input)))
     (cons input (apply-partially #'orderless--highlight input t)))
   (consult-customize affe-grep :preview-key "M-."))
@@ -307,12 +308,14 @@
   ;; (corfu-popupinfo-mode)
   )
 
-;; Orderless -- fzf-like finder/matcher
+;; Hotfuzz -- fzf-like scoring and ranking for completion candidates
+(use-package hotfuzz)
+
+;; Orderless -- multi-component matching (space-separated patterns)
 (use-package orderless
   :custom
-  (completion-styles '(orderless basic))
+  (completion-styles '(hotfuzz orderless basic))
   (completion-category-overrides '((file (styles partial-completion))))
-  (orderless-matching-styles '(orderless-flex)) ;; fzf-style: match chars in order, skip intermediates
   (orderless-smart-case t)
   (completion-ignore-case t)
   (read-buffer-completion-ignore-case t)
