@@ -117,6 +117,8 @@
 
 (use-package evil-collection
   :after evil
+  :init
+  (setq evil-collection-setup-minibuffer t) ;; Evil bindings in minibuffer (insert mode by default)
   :config
   (evil-collection-init))
 
