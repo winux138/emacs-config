@@ -33,7 +33,6 @@
   (global-auto-revert-non-file-buffers t)         ;; Automatically refresh non-file buffers.
   (history-length 25)                             ;; Set the length of the command history.
   (indent-tabs-mode nil)                          ;; Disable the use of tabs for indentation (use spaces instead).
-  ;; (inhibit-startup-message t)                     ;; Disable the startup message when Emacs launches.
   (initial-scratch-message "")                    ;; Clear the initial message in the *scratch* buffer.
   (ispell-dictionary "en_US")                     ;; Set the default dictionary for spell checking.
   (make-backup-files nil)                         ;; Disable creation of backup files.
@@ -46,9 +45,6 @@
   (treesit-font-lock-level 4)                     ;; Use advanced font locking for Treesit mode.
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
-
-  ;; :hook                                           ;; Add hooks to enable specific features in certain modes.
-  ;; (prog-mode . display-line-numbers-mode)         ;; Enable line numbers in programming modes.
 
   :config
   ;; By default emacs gives you access to a lot of *special* buffers, while navigating with [b and ]b,
@@ -70,12 +66,6 @@
   (set-display-table-slot standard-display-table 'vertical-border (make-glyph-code ?│))
 
   :init                        ;; Initialization settings that apply before the package is loaded.
-  (tool-bar-mode -1)           ;; Disable the tool bar for a cleaner interface.
-  (menu-bar-mode -1)           ;; Disable the menu bar for a more streamlined look.
-
-  (when scroll-bar-mode
-    (scroll-bar-mode -1))      ;; Disable the scroll bar if it is active.
-
   (global-hl-line-mode -1)     ;; Disable highlight of the current line
   (global-auto-revert-mode 1)  ;; Enable global auto-revert mode to keep buffers up to date with their corresponding files.
   (recentf-mode 1)             ;; Enable tracking of recently opened files.
@@ -102,17 +92,13 @@
 
 (use-package evil
   :init
-  (setq
-   evil-want-integration t
-   evil-want-keybinding nil
-   evil-want-C-u-scroll t
-   evil-want-Y-yank-to-eol t)
-   :config
-  (evil-set-undo-system 'undo-tree)   ;; Uses the undo-tree package as the default undo system
-
-  ;; Set the leader key to space for easier access to custom commands. (setq evil-want-leader t)
-  (setq evil-leader/in-all-states t)  ;; Make the leader key available in all states.
-  (setq evil-want-fine-undo t)        ;; Evil uses finer grain undoing steps
+  (setq evil-want-integration t
+        evil-want-keybinding nil
+        evil-want-C-u-scroll t
+        evil-want-Y-yank-to-eol t
+        evil-want-fine-undo t)
+  :config
+  (evil-set-undo-system 'undo-tree)
   (evil-mode))
 
 (use-package evil-collection
@@ -127,14 +113,6 @@
   :after evil
   :config
   (evil-define-key 'normal 'global "s" 'avy-goto-char-2))
-
-;; ;; Best completion style ?!
-;; (use-package hotfuzz
-;;   :config
-;;   (setq completion-styles '(hotfuzz)
-;;         completion-ignore-case t
-;;         read-buffer-completion-ignore-case t
-;;         read-file-name-completion-ignore-case t))
 
 ;; Slurp environment variables from the shell.
 ;; a.k.a. The Most Asked Question On r/emacs
@@ -270,7 +248,6 @@
   :config
   (setq consult-line-start-from-top t)) ;; Search from top of buffer.
 
-;; Affe -- async fuzzy file finder (fzf-style matching via orderless-flex)
 ;; Affe -- async fuzzy file finder and grep
 (use-package affe
   :config
