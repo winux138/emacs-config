@@ -319,7 +319,24 @@
         lsp-headerline-breadcrumb-enable nil)) ;; Disable breadcrumb header a-la-vscode.
 
 (use-package lsp-ui
-  :commands lsp-ui-mode)
+  :commands lsp-ui-mode
+  :config
+  (setq lsp-ui-doc-show-with-cursor nil   ;; Don't auto-show doc on cursor hover
+        lsp-ui-doc-show-with-mouse nil     ;; Don't auto-show doc on mouse hover
+        lsp-ui-doc-position 'at-point)     ;; Show doc near cursor, not top-right
+
+  ;; Neovim-style K: first press shows doc, second press focuses it for scrolling/copying.
+  (defun lsp-ui-doc-toggle-focus ()
+    "Show LSP hover doc, or focus it if already visible."
+    (interactive)
+    (if (lsp-ui-doc--frame-visible-p)
+        (lsp-ui-doc-focus-frame)
+      (lsp-ui-doc-show)))
+
+  (evil-define-key 'normal lsp-ui-mode-map "K" #'lsp-ui-doc-toggle-focus)
+
+  ;; Press q to close and return from the focused doc frame.
+  (define-key lsp-ui-doc-frame-mode-map [?q] #'lsp-ui-doc-unfocus-frame))
 
 (use-package consult-lsp
   :after lsp-mode)
