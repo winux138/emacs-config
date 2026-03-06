@@ -294,14 +294,18 @@
   ;; (corfu-popupinfo-mode)
   )
 
-;; Orderless -- hopefully a fzf-like finder/matcher
+;; Orderless -- fzf-like finder/matcher
 (use-package orderless
   :custom
-  (completion-styles '(orderless flex partial-completion basic))
+  (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles partial-completion))))
+  (orderless-matching-styles '(orderless-flex)) ;; fzf-style: match chars in order, skip intermediates
   (orderless-smart-case t)
-  (completion-category-defaults nil) ;; Disable defaults, use our settings
-  (completion-pcm-leading-wildcard t)) ;; Emacs 31: partial-completion behaves like substring
+  (completion-ignore-case t)
+  (read-buffer-completion-ignore-case t)
+  (read-file-name-completion-ignore-case t)
+  (completion-category-defaults nil)
+  (completion-pcm-leading-wildcard t))
 
 ;; Flycheck -- on-the-fly syntax checking.
 (use-package flycheck
