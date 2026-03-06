@@ -171,7 +171,8 @@
 
     ;; Files
     "f"   '(:ignore t :wk "file")
-    "ff"  '(find-file :wk "find file")
+    "ff"  '(affe-find :wk "find file")
+    "fg"  '(affe-grep :wk "grep files")
     "fs"  '(save-buffer :wk "save file")
     "fr"  '(recentf :wk "recent files")
 
