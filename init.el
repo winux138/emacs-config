@@ -267,6 +267,16 @@
   :config
   (setq consult-line-start-from-top t)) ;; Search from top of buffer.
 
+;; Affe -- async fuzzy file finder (fzf-style matching via orderless-flex)
+(use-package affe
+  :config
+  (setq affe-regexp-compiler #'affe-orderless-regexp-compiler)
+  (defun affe-orderless-regexp-compiler (input _type _ignorecase)
+    "Compile INPUT using orderless for affe fuzzy matching."
+    (setq input (cdr (orderless-compile input)))
+    (cons input (apply-partially #'orderless--highlight input t)))
+  (consult-customize affe-grep :preview-key "M-."))
+
 (use-package corfu
   ;; Optional customizations
   ;; :custom
