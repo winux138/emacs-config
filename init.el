@@ -392,10 +392,14 @@
 
 ;; (use-package gruber-darker-theme
 ;;   :config
-;;   (load-theme 'gruber-darker t)
+;;   (load-theme 'gruber-darker t))
 
-(use-package doric-themes
+(use-package nano-theme
   :config
-  (doric-themes-select 'doric-jade))
+  (load-theme 'nano-light t))
+
+;; (use-package doric-themes
+;;   :config
+;;   (doric-themes-select 'doric-jade))
 
 ;;; init.el ends here
