@@ -47,8 +47,8 @@
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
 
-  :hook                                           ;; Add hooks to enable specific features in certain modes.
-  (prog-mode . display-line-numbers-mode)         ;; Enable line numbers in programming modes.
+  ;; :hook                                           ;; Add hooks to enable specific features in certain modes.
+  ;; (prog-mode . display-line-numbers-mode)         ;; Enable line numbers in programming modes.
 
   :config
   ;; By default emacs gives you access to a lot of *special* buffers, while navigating with [b and ]b,
@@ -84,6 +84,7 @@
   (winner-mode 1)              ;; Enable winner mode to easily undo window configuration changes.
   (xterm-mouse-mode 1)         ;; Enable mouse support in terminal mode.
   (file-name-shadow-mode 1)    ;; Enable shadowing of filenames for clarity.
+  (global-display-line-numbers-mode 1)
 
   ;; Set the default coding system for files to UTF-8.
   (modify-coding-system-alist 'file "" 'utf-8))
@@ -374,10 +375,10 @@
 
 ;; (use-package gruber-darker-theme
 ;;   :config
-;;   (load-theme 'gruber-darker t))
+;;   (load-theme 'gruber-darker t)
 
 (use-package doric-themes
   :config
-  (doric-themes-select 'doric-wind))
+  (doric-themes-select 'doric-jade))
 
 ;;; init.el ends here
