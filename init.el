@@ -376,6 +376,16 @@
   :config
   (direnv-mode))
 
+;;; XCLIP
+;; `xclip' is an Emacs package that integrates the X Window System clipboard
+;; with Emacs. It allows seamless copying and pasting between Emacs and other
+;; applications using the clipboard. When `xclip' is enabled, any text copied
+;; in Emacs can be pasted in other applications, and vice versa, providing a
+;; smooth workflow when working across multiple environments.
+(use-package xclip
+  :hook
+  (after-init . xclip-mode))     ;; Enable xclip mode after initialization.
+
 (use-package diff-hl
   :config
   (global-diff-hl-mode))
@@ -391,12 +401,12 @@
 ;;   :config
 ;;   (load-theme 'gruber-darker t))
 
-(use-package nano-theme
-  :config
-  (load-theme 'nano-light t))
-
-;; (use-package doric-themes
+;; (use-package nano-theme
 ;;   :config
-;;   (doric-themes-select 'doric-jade))
+;;   (load-theme 'nano-light t))
+
+(use-package doric-themes
+  :config
+  (doric-themes-select 'doric-jade))
 
 ;;; init.el ends here
