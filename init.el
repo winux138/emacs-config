@@ -254,7 +254,7 @@
   (setq affe-regexp-compiler #'affe-orderless-regexp-compiler)
   (defun affe-orderless-regexp-compiler (input _type _ignorecase)
     "Compile INPUT to regexps via orderless for affe's async pre-filtering."
-    (setq input (cdr (orderless-compile input)))
+    (setq input (cdr (orderless-compile input '(orderless-flex))))
     (cons input (apply-partially #'orderless--highlight input t)))
   (consult-customize affe-grep :preview-key "M-."))
 
