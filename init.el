@@ -45,6 +45,7 @@
   (treesit-font-lock-level 4)                     ;; Use advanced font locking for Treesit mode.
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
+  (scroll-off 5)
 
   :config
   ;; By default emacs gives you access to a lot of *special* buffers, while navigating with [b and ]b,
@@ -108,11 +109,31 @@
   :config
   (evil-collection-init))
 
+(use-package evil-numbers
+  :after evil
+  :config
+  ;; C-a to increment (like Vim), C-S-a to decrement (GUI only).
+  ;; Keeps C-x free as Emacs prefix key.
+  (evil-define-key '(normal visual) 'global
+    (kbd "C-a") 'evil-numbers/inc-at-pt
+    (kbd "C-S-a") 'evil-numbers/dec-at-pt)
+  ;; Doom-style g= / g- as secondary bindings (also work in terminal).
+  (evil-define-key 'normal 'global
+    (kbd "g=") 'evil-numbers/inc-at-pt
+    (kbd "g-") 'evil-numbers/dec-at-pt)
+  (evil-define-key 'visual 'global
+    (kbd "g=") 'evil-numbers/inc-at-pt-incremental
+    (kbd "g-") 'evil-numbers/dec-at-pt-incremental
+    (kbd "g+") 'evil-numbers/inc-at-pt))
+(use-package evil-surround
+             :config
+             (global-evil-surround-mode 1))
+
 ;; Jump to visible text with avy, bound to 's' in normal state.
 (use-package avy
   :after evil
   :config
-  (evil-define-key 'normal 'global "s" 'avy-goto-char-2))
+  (evil-define-key 'normal 'global "s" 'avy-goto-char-timer))
 
 ;; Slurp environment variables from the shell.
 ;; a.k.a. The Most Asked Question On r/emacs
@@ -386,9 +407,9 @@
   :hook
   (after-init . xclip-mode))     ;; Enable xclip mode after initialization.
 
-(use-package diff-hl
+(use-package git-gutter
   :config
-  (global-diff-hl-mode))
+  (global-git-gutter-mode 1))
 
 ;; Markdown preview with plantuml diagram support.
 (use-package markdown-mode)
