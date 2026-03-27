@@ -172,8 +172,8 @@
 
     ;; Files
     "f"   '(:ignore t :wk "file")
-    "ff"  '(affe-find :wk "find file")
-    "fg"  '(affe-grep :wk "grep files")
+    "ff"  '(consult-fzf-find :wk "find file (fzf)")
+    "fg"  '(consult-fzf-grep :wk "grep files (fzf)")
     "fs"  '(save-buffer :wk "save file")
     "fr"  '(recentf :wk "recent files")
 
@@ -269,15 +269,81 @@
   :config
   (setq consult-line-start-from-top t)) ;; Search from top of buffer.
 
-;; Affe -- async fuzzy file finder and grep
-(use-package affe
-  :config
-  (setq affe-regexp-compiler #'affe-orderless-regexp-compiler)
-  (defun affe-orderless-regexp-compiler (input _type _ignorecase)
-    "Compile INPUT to regexps via orderless for affe's async pre-filtering."
-    (setq input (cdr (orderless-compile input '(orderless-flex))))
-    (cons input (apply-partially #'orderless--highlight input t)))
-  (consult-customize affe-grep :preview-key "M-."))
+;; Consult-fzf -- use the real fzf binary for fuzzy matching, displayed in Vertico.
+;; fzf --filter reads stdin and writes fuzzy-matched results to stdout (no TUI).
+;; We pipe fd/rg output through fzf --filter and feed results into consult's
+;; async pipeline so they appear in Vertico with full marginalia annotations.
+
+(defvar consult--fzf-find-history nil)
+(defvar consult--fzf-grep-history nil)
+
+(defun consult--fzf-find-builder (input)
+  "Build command for fd piped through fzf --filter.
+INPUT is the search string from the minibuffer."
+  (pcase-let ((`(,arg . ,opts) (consult--command-split input)))
+    (unless (string-empty-p arg)
+      (cons (list "sh" "-c"
+                  (format "fd --type f --color=never --hidden --exclude .git %s | fzf --filter %s"
+                          (mapconcat #'shell-quote-argument opts " ")
+                          (shell-quote-argument arg)))
+            nil))))
+
+(defun consult-fzf-find (&optional dir initial)
+  "Find files with fd + fzf in DIR. INITIAL is optional initial input."
+  (interactive "P")
+  (pcase-let* ((`(,prompt ,_paths ,dir) (consult--directory-prompt "Fzf" dir))
+               (default-directory dir))
+    (find-file
+     (consult--read
+      (consult--process-collection #'consult--fzf-find-builder
+        :transform (consult--async-map (lambda (x) (string-remove-prefix "./" x)))
+        :file-handler t)
+      :prompt prompt
+      :sort nil
+      :require-match t
+      :initial initial
+      :add-history (thing-at-point 'filename)
+      :category 'file
+      :history '(:input consult--fzf-find-history)))))
+
+(defun consult--fzf-grep-make-builder (paths)
+  "Return a builder that pipes rg through fzf --filter.
+PATHS is a list of directories to search."
+  (lambda (input)
+    (pcase-let ((`(,arg . ,opts) (consult--command-split input)))
+      (unless (string-empty-p arg)
+        (let* ((tokens (split-string arg))
+               (rg-pattern (car tokens)))
+          (cons (list "sh" "-c"
+                      (format "rg --null --line-buffered --color=never --max-columns=1000 \
+--path-separator / --smart-case --no-heading --with-filename --line-number %s \
+-e %s %s | fzf --filter %s"
+                              (mapconcat #'shell-quote-argument opts " ")
+                              (shell-quote-argument rg-pattern)
+                              (mapconcat #'shell-quote-argument (or paths '()) " ")
+                              (shell-quote-argument arg)))
+                nil))))))
+
+(defun consult-fzf-grep (&optional dir initial)
+  "Grep files with rg + fzf in DIR. INITIAL is optional initial input."
+  (interactive "P")
+  (pcase-let* ((`(,prompt ,paths ,dir) (consult--directory-prompt "Fzf-grep" dir))
+               (default-directory dir)
+               (builder (consult--fzf-grep-make-builder paths)))
+    (consult--read
+     (consult--process-collection builder
+       :transform (consult--grep-format builder)
+       :file-handler t)
+     :prompt prompt
+     :lookup #'consult--lookup-member
+     :state (consult--grep-state)
+     :initial initial
+     :add-history (thing-at-point 'symbol)
+     :require-match t
+     :category 'consult-grep
+     :group #'consult--prefix-group
+     :history '(:input consult--fzf-grep-history)
+     :sort nil)))
 
 (use-package corfu
   ;; Optional customizations
