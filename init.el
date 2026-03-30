@@ -277,11 +277,36 @@
 (defvar consult--fzf-find-history nil)
 (defvar consult--fzf-grep-history nil)
 
+(defun consult--fzf-highlight (input)
+  "Return a highlight function for fzf-style fuzzy INPUT.
+Builds a regexp that matches each query character sequentially,
+then highlights the matched characters with `consult-highlight-match'."
+  (pcase-let ((`(,arg . ,_opts) (consult--command-split input)))
+    (unless (string-empty-p arg)
+      ;; Build a fuzzy regexp: "abc" -> "\\(a\\).*?\\(b\\).*?\\(c\\)"
+      ;; Each character gets its own capture group for precise highlighting.
+      (let* ((chars (string-to-list arg))
+             (re (mapconcat (lambda (c) (format "\\(%s\\)" (regexp-quote (string c))))
+                            chars ".*?")))
+        (lambda (str)
+          (let ((case-fold-search completion-ignore-case))
+            (when (string-match re str)
+              (let ((i 1))
+                (while (<= i (length chars))
+                  (when (match-beginning i)
+                    (add-face-text-property (match-beginning i) (match-end i)
+                                            'consult-highlight-match nil str))
+                  (setq i (1+ i)))))))
+        ))))
+
 (defun consult--fzf-find-builder (input)
   "Build command for fd piped through fzf --filter.
 INPUT is the search string from the minibuffer."
   (pcase-let ((`(,arg . ,opts) (consult--command-split input)))
-    (unless (string-empty-p arg)
+    (if (string-empty-p arg)
+        ;; No query yet -- just list all files with fd.
+        (cons (append (list "fd" "--type" "f" "--color=never" "--hidden" "--exclude" ".git") opts)
+              nil)
       (cons (list "sh" "-c"
                   (format "fd --type f --color=never --hidden --exclude .git %s | fzf --filter %s"
                           (mapconcat #'shell-quote-argument opts " ")
@@ -296,7 +321,9 @@ INPUT is the search string from the minibuffer."
     (find-file
      (consult--read
       (consult--process-collection #'consult--fzf-find-builder
+        :min-input 0
         :transform (consult--async-map (lambda (x) (string-remove-prefix "./" x)))
+        :highlight #'consult--fzf-highlight
         :file-handler t)
       :prompt prompt
       :sort nil
@@ -332,7 +359,9 @@ PATHS is a list of directories to search."
                (builder (consult--fzf-grep-make-builder paths)))
     (consult--read
      (consult--process-collection builder
+       :min-input 0
        :transform (consult--grep-format builder)
+       :highlight #'consult--fzf-highlight
        :file-handler t)
      :prompt prompt
      :lookup #'consult--lookup-member
