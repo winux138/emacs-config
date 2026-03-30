@@ -502,9 +502,9 @@ PATHS is a list of directories to search."
   :hook
   (after-init . xclip-mode))     ;; Enable xclip mode after initialization.
 
-(use-package git-gutter
+(use-package diff-hl
   :config
-  (global-git-gutter-mode 1))
+  (global-diff-hl-mode 1))
 
 ;; Markdown preview with plantuml diagram support.
 (use-package markdown-mode)
