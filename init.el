@@ -45,7 +45,7 @@
   (treesit-font-lock-level 4)                     ;; Use advanced font locking for Treesit mode.
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
-  (scroll-off 5)
+  (setq scroll-margin 5)
 
   :config
   ;; By default emacs gives you access to a lot of *special* buffers, while navigating with [b and ]b,
@@ -340,11 +340,14 @@ PATHS is a list of directories to search."
     (pcase-let ((`(,arg . ,opts) (consult--command-split input)))
       (unless (string-empty-p arg)
         (let* ((tokens (split-string arg))
-               (rg-pattern (car tokens)))
+               ;; Convert first token to fuzzy rg regex: "fgr" -> "f.*g.*r"
+               (rg-pattern (mapconcat #'regexp-quote
+                                      (mapcar #'string (string-to-list (car tokens)))
+                                      ".*")))
           (cons (list "sh" "-c"
                       (format "rg --null --line-buffered --color=never --max-columns=1000 \
 --path-separator / --smart-case --no-heading --with-filename --line-number %s \
--e %s %s | fzf --filter %s"
+-e %s %s | tr '\\0' '\\037' | fzf --filter %s | tr '\\037' '\\0'"
                               (mapconcat #'shell-quote-argument opts " ")
                               (shell-quote-argument rg-pattern)
                               (mapconcat #'shell-quote-argument (or paths '()) " ")
@@ -520,6 +523,10 @@ PATHS is a list of directories to search."
 ;; (use-package nano-theme
 ;;   :config
 ;;   (load-theme 'nano-light t))
+
+(use-package mindre-theme
+  :config
+  (load-theme 'mindre t))
 
 (use-package doric-themes
   :config
