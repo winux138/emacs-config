@@ -45,7 +45,7 @@
   (treesit-font-lock-level 4)                     ;; Use advanced font locking for Treesit mode.
   (use-dialog-box nil)                            ;; Disable dialog boxes in favor of minibuffer prompts.
   (use-short-answers t)                           ;; Use short answers in prompts for quicker responses (y instead of yes)
-  (setq scroll-margin 5)
+  (scroll-margin 5)
 
   :config
   ;; By default emacs gives you access to a lot of *special* buffers, while navigating with [b and ]b,
@@ -174,8 +174,9 @@
     "f"   '(:ignore t :wk "file")
     "ff"  '(consult-fzf-find :wk "find file (fzf)")
     "fg"  '(consult-fzf-grep :wk "grep files (fzf)")
+    "fb"  '(consult-buffer :wk "buffers")
     "fs"  '(save-buffer :wk "save file")
-    "fr"  '(recentf :wk "recent files")
+    "fr"  '(consult-recent-file :wk "recent files")
 
     ;; Windows
     "w"   '(:ignore t :wk "window")
@@ -251,6 +252,7 @@
 (use-package vertico
   :init
   (vertico-mode)
+  (vertico-multiform-mode)
   :custom
   (vertico-cycle t))
 
@@ -331,6 +333,7 @@ INPUT is the search string from the minibuffer."
       :initial initial
       :add-history (thing-at-point 'filename)
       :category 'file
+      :state (consult--file-preview)
       :history '(:input consult--fzf-find-history)))))
 
 (defun consult--fzf-grep-make-builder (paths)
@@ -345,9 +348,9 @@ PATHS is a list of directories to search."
                                       (mapcar #'string (string-to-list (car tokens)))
                                       ".*")))
           (cons (list "sh" "-c"
-                      (format "rg --null --line-buffered --color=never --max-columns=1000 \
+                      (format "rg --line-buffered --color=never --max-columns=1000 \
 --path-separator / --smart-case --no-heading --with-filename --line-number %s \
--e %s %s | tr '\\0' '\\037' | fzf --filter %s | tr '\\037' '\\0'"
+-e %s %s | fzf --filter %s | sed 's/^\\([^:]*\\):\\([0-9]*\\):/\\1\\x00\\2:/'"
                               (mapconcat #'shell-quote-argument opts " ")
                               (shell-quote-argument rg-pattern)
                               (mapconcat #'shell-quote-argument (or paths '()) " ")
@@ -362,10 +365,8 @@ PATHS is a list of directories to search."
                (builder (consult--fzf-grep-make-builder paths)))
     (consult--read
      (consult--process-collection builder
-       :min-input 0
-       :transform (consult--grep-format builder)
-       :highlight #'consult--fzf-highlight
-       :file-handler t)
+        :transform (consult--grep-format builder)
+        :file-handler t)
      :prompt prompt
      :lookup #'consult--lookup-member
      :state (consult--grep-state)
@@ -495,15 +496,16 @@ PATHS is a list of directories to search."
   :config
   (direnv-mode))
 
-;;; XCLIP
-;; `xclip' is an Emacs package that integrates the X Window System clipboard
-;; with Emacs. It allows seamless copying and pasting between Emacs and other
-;; applications using the clipboard. When `xclip' is enabled, any text copied
-;; in Emacs can be pasted in other applications, and vice versa, providing a
-;; smooth workflow when working across multiple environments.
+;;; CLIPBOARD
+;; xclip prefers X11 tools by default, even in Wayland sessions.
+;; Use wl-clipboard on Wayland; keep default backend detection for X11.
 (use-package xclip
+  :init
+  (when (getenv "WAYLAND_DISPLAY")
+    (setq xclip-method 'wl-copy
+          xclip-program "wl-copy"))
   :hook
-  (after-init . xclip-mode))     ;; Enable xclip mode after initialization.
+  (after-init . xclip-mode))
 
 (use-package diff-hl
   :config
@@ -524,12 +526,13 @@ PATHS is a list of directories to search."
 ;;   :config
 ;;   (load-theme 'nano-light t))
 
-(use-package mindre-theme
-  :config
-  (load-theme 'mindre t))
+;; (use-package mindre-theme
+;;   :config
+;;   (load-theme 'mindre t))
 
 (use-package doric-themes
   :config
   (doric-themes-select 'doric-jade))
 
 ;;; init.el ends here
+(put 'scroll-left 'disabled nil)
